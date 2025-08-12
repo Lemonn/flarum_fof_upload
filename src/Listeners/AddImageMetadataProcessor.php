@@ -25,13 +25,12 @@ class AddImageMetadataProcessor
     public function handle(WasSaved $event): void
     {
         if ($this->validateMime($event->mime)) {
-            $this->processor->addMetadata($event->file, $event->uploadedFile, $event->mime);
+            $this->processor->addMetadata($event->file);
         }
     }
 
     protected function validateMime($mime): bool
     {
-        return true;
         if ($mime == 'image/jpeg' || $mime == 'image/png' || $mime == 'image/gif' || $mime == 'image/svg+xml') {
             return true;
         }

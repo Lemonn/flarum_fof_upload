@@ -13,6 +13,7 @@
 namespace FoF\Upload\Commands;
 
 use Flarum\Settings\SettingsRepositoryInterface;
+use Flarum\User\Exception\PermissionDeniedException;
 use FoF\Upload\Contracts\Downloader;
 use FoF\Upload\Events\File\WasLoaded;
 use FoF\Upload\Events\File\WillBeDownloaded;
@@ -21,6 +22,7 @@ use FoF\Upload\Repositories\FileRepository;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Arr;
+use Psr\Http\Message\ResponseInterface;
 
 class DownloadHandler
 {
@@ -37,10 +39,10 @@ class DownloadHandler
      * @param Download $command
      *
      * @throws InvalidDownloadException
-     * @throws \Flarum\User\Exception\PermissionDeniedException
+     * @throws PermissionDeniedException
      * @throws InvalidDownloadException
      *
-     * @return mixed
+     * @return ResponseInterface
      */
     public function handle(Download $command)
     {

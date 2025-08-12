@@ -13,6 +13,7 @@
 namespace FoF\Upload\Formatter\ImagePreview;
 
 use FoF\Upload\ImageMetadata;
+use FoF\Upload\Processors\ImageProcessor;
 use FoF\Upload\Repositories\FileRepository;
 use Illuminate\Support\Arr;
 use s9e\TextFormatter\Renderer;
@@ -21,16 +22,18 @@ use s9e\TextFormatter\Utils;
 class FormatImagePreview
 {
     public function __construct(
-        private FileRepository $files
-    ) {
+        private readonly FileRepository $files,
+        private readonly ImageProcessor $imageProcessor
+    )
+    {
     }
 
     /**
      * Configure rendering for image preview uploads.
      *
      * @param Renderer $renderer
-     * @param mixed    $context
-     * @param string   $xml
+     * @param mixed $context
+     * @param string $xml
      *
      * @return string $xml to be rendered
      */
@@ -58,10 +61,14 @@ class FormatImagePreview
                 $attributes['title'] = $file->base_name;
             }
 
-            // Add aspect ratio if image metadata exists
             $imageMetadata = ImageMetadata::byFile($file);
 
-            if ($imageMetadata && $imageMetadata->image_width && $imageMetadata->image_height) {
+            if ($imageMetadata == null) {
+                $this->imageProcessor->addMetadata($file);
+                $imageMetadata = ImageMetadata::byFile($file);
+            }
+
+            if (isset($imageMetadata->image_height) && isset($imageMetadata->image_width)) {
                 $attributes['aspectRatio'] = $imageMetadata->image_width . "/" . $imageMetadata->image_height;
             }
 

@@ -29,7 +29,7 @@ return [
             // Add foreign key constraint
             $table->foreign('upload_id')
                 ->references('id')
-                ->on('flarum_fof_upload_files')
+                ->on('fof_upload_files')
                 ->onDelete('cascade');
         });
     },

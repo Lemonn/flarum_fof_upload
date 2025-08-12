@@ -14,7 +14,11 @@ namespace FoF\Upload\Processors;
 
 use Flarum\Foundation\ValidationException;
 use Flarum\Settings\SettingsRepositoryInterface;
+use Flarum\User\Exception\PermissionDeniedException;
+use FoF\Upload\Commands\Download;
+use FoF\Upload\Commands\DownloadHandler;
 use FoF\Upload\Contracts\Processable;
+use FoF\Upload\Exceptions\InvalidDownloadException;
 use FoF\Upload\File;
 use FoF\Upload\Helpers\Util;
 use Illuminate\Contracts\Filesystem\Cloud;
@@ -33,6 +37,7 @@ class ImageProcessor implements Processable
 
     public function __construct(
         protected SettingsRepositoryInterface $settings,
+        protected DownloadHandler $downloadHandler,
         Factory $factory
     ) {
         $this->assetsDir = $factory->disk('flarum-assets');
@@ -93,11 +98,19 @@ class ImageProcessor implements Processable
         }
     }
 
-    public function addMetadata(File &$file, UploadedFile &$upload, string &$mime): void
+    /**
+     * Fills the metadata model based on the image optioned from storage.
+     *
+     * @throws PermissionDeniedException
+     * @throws ValidationException
+     * @throws InvalidDownloadException
+     */
+    public function addMetadata(File $file): void
     {
+        $data = $this->downloadHandler->handle(new Download(uuid: $file->uuid, actor: $file->actor));
         try {
-            $image = (new ImageManager())->make('assets/files'.DIRECTORY_SEPARATOR.$file->path);
-        } catch (NotReadableException $e) {
+            $image = (new ImageManager())->make($data->getBody());
+        } catch (NotReadableException) {
             throw new ValidationException(['upload' => 'Corrupted image']);
         }
 
@@ -108,6 +121,5 @@ class ImageProcessor implements Processable
             'image_height' => $image->height(),
         ]);
         $file->save();
-
     }
 }

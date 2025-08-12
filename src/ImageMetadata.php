@@ -4,6 +4,8 @@ namespace FoF\Upload;
 
 use Flarum\Database\AbstractModel;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property int $upload_id
@@ -16,9 +18,8 @@ class ImageMetadata extends AbstractModel
 {
     protected $table = 'fof_upload_image_metadata';
 
-    // The primary key is 'upload_id', not 'id'
     protected $primaryKey = 'upload_id';
-    public $incrementing = false; // because it's not auto-incrementing (as it's a foreign key)
+    public $incrementing = false;
     protected $keyType = 'int';
 
     protected $fillable = [
@@ -33,7 +34,7 @@ class ImageMetadata extends AbstractModel
             ->where('uuid', $uuid);
     }
 
-    public static function byFile($file): Builder|\Illuminate\Database\Eloquent\Model|null
+    public static function byFile($file): Builder|Model|null
     {
         if (!$file) {
             return null;
@@ -45,7 +46,7 @@ class ImageMetadata extends AbstractModel
     /**
      * Relation to the File model
      */
-    public function file(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function file(): BelongsTo
     {
         return $this->belongsTo(File::class, 'upload_id', 'id');
     }
@@ -53,7 +54,7 @@ class ImageMetadata extends AbstractModel
     /**
      * Static helper to find a metadata row by upload_id
      */
-    public static function byUploadId(int $uploadId): \Illuminate\Database\Eloquent\Builder|null
+    public static function byUploadId(int $uploadId): ?self
     {
         return static::query()->where('upload_id', $uploadId)->first();
     }
