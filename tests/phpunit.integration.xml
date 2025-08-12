@@ -29,3 +29,4 @@
         <ini name="error_reporting" value="E_ALL"/>
         <ini name="log_errors" value="On"/>
     </php>
+</phpunit>
