@@ -11,7 +11,6 @@
     processIsolation="true"
     stopOnFailure="false"
     verbose="true"
-    stderr="true"
 >
     <coverage processUncoveredFiles="true">
         <include>
@@ -24,9 +23,4 @@
             <exclude>./integration/tmp</exclude>
         </testsuite>
     </testsuites>
-    <php>
-        <ini name="display_errors" value="On"/>
-        <ini name="error_reporting" value="E_ALL"/>
-        <ini name="log_errors" value="On"/>
-    </php>
 </phpunit>
