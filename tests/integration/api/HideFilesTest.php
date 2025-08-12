@@ -230,6 +230,8 @@ class HideFilesTest extends EnhancedTestCase
 
         $this->assertEquals(200, $response->getStatusCode());
 
+        error_log("Debug info: " . print_r($response->getBody()->getContents(), true));
+
         $file = File::byUuid($uuid)->first();
 
         $json = json_decode($response->getBody()->getContents(), true);
