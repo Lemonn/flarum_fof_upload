@@ -10,6 +10,8 @@
     convertWarningsToExceptions="true"
     processIsolation="true"
     stopOnFailure="false"
+    verbose="true"
+    stderr="true"
 >
     <coverage processUncoveredFiles="true">
         <include>
@@ -19,7 +21,11 @@
     <testsuites>
         <testsuite name="Flarum Integration Tests">
             <directory suffix="Test.php">./integration</directory>
-             <exclude>./integration/tmp</exclude>
+            <exclude>./integration/tmp</exclude>
         </testsuite>
     </testsuites>
-</phpunit>
+    <php>
+        <ini name="display_errors" value="On"/>
+        <ini name="error_reporting" value="E_ALL"/>
+        <ini name="log_errors" value="On"/>
+    </php>
